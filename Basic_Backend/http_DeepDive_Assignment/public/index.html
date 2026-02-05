@@ -1,0 +1,57 @@
+<!-- 
+<head>
+    <title>CORS Example</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.6/axios.min.js"></script>
+
+    <script>
+        function sendRequest() {
+            const a = document.getElementById("a").value;
+            const b = document.getElementById("b").value;
+
+            axios.post("http://localhost:3000/sum", {
+                a:a,
+                b:b
+            })
+        }
+    </script>
+</head>
+<body>
+    <input id="a" type="text" placeholder="First value"></body>
+    <input id="b" type="text" placeholder="Second value"></body>
+
+    <button onclick="sendRequest()">Find Sum</button>
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CORS Example</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.6/axios.min.js"></script>
+
+  <script>
+    async function sendRequest() {
+      const a = document.getElementById("a").value;
+      const b = document.getElementById("b").value;
+
+      const response = await axios.post("http://localhost:3000/sum", {
+        a: a,
+        b: b
+      });
+
+      document.getElementById("result").innerHTML =
+        "Sum = " + response.data.answer;
+    }
+  </script>
+</head>
+
+<body>
+  <input id="a" type="text" placeholder="First value">
+  <input id="b" type="text" placeholder="Second value">
+
+  <button onclick="sendRequest()">Find Sum</button>
+
+  <h2 id="result"></h2>
+</body>
+</html>

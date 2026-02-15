@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth Website</title>
+</head>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+    //We make it a async function as we need to await later during axios.post call
+    async function signup() {
+        const username = document.getElementById("signup-username").value;
+        const password = document.getElementById("signup-password").value;
+
+        //Now we have both the values now we need to send the values to the backend
+        //We can use an inbuild library "fetch" but here we are using or generally use "Axios"
+
+        //we await because it is sending the request to a backend server
+        //It can take lot of times sometime
+        //It will return you a promise function
+        const response = await axios.post("http://localhost:3000/signup", {
+            username: username,
+            password: password
+        });
+        alert("You are signed in!");
+    }
+
+    async function signin() {
+        const username=document.getElementById("signin-username").value;
+        const password=document.getElementById("signin-password").value;
+
+        const response = await axios.post("http://localhost:3000/signin", {
+            username:username,
+            password:password
+        });
+
+        //Here the new thing is that the backend return us the "token" that we need to store it somewhere
+        //And the place we are going to store it is known as "localStorage"
+        //Every website has this "localStorage" and they store there few things such as theme, token, etc
+        //And stores in Key and value pair
+
+        localStorage.setItem("token", response.data.token);
+        //so whenever we send a request to signin we want to store the token provided by backend somewhere in the "localStorage"
+        //Why are we doing this. So that in every sbsequent request I can send this token along
+
+        alert("You are sign in!");
+    }
+</script>
+
+<body>
+    <div>
+        Signup
+        <input id="signup-username" type="text" name="username" placeholder="username">
+        <input id="signup-password" type="password" name="username" placeholder="username">
+        <button onclick="signup()">Submit</button>
+    </div>
+    <hr>
+    <div>
+        Signin
+        <input id="signin-username" type="text" name="username" placeholder="username">
+        <input id="signin-password" type="password" name="username" placeholder="username">
+        <button onclick="signin()">Submit</button>
+    </div>
+    <hr>
+    <div>
+        User Information:
+        <div id="information"></div>
+    </div>
+    <hr>
+    <div>
+        <button>Logout</button>
+    </div>
+
+</body>
+
+</html>

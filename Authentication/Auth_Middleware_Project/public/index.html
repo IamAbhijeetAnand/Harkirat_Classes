@@ -24,43 +24,113 @@
             username: username,
             password: password
         });
-        alert("You are signed in!");
+        alert("You are signed Up!");
     }
 
+    // async function signin() {
+    //     const username=document.getElementById("signin-username").value;
+    //     const password=document.getElementById("signin-password").value; 
+    //     const response = await axios.post("http://localhost:3000/signin", {
+    //         username:username,
+    //         password:password
+    //     });
+
+    //     //Here the new thing is that the backend return us the "token" that we need to store it somewhere
+    //     //And the place we are going to store it is known as "localStorage"
+    //     //Every website has this "localStorage" and they store there few things such as theme, token, etc
+    //     //And stores in Key and value pair
+
+    //     localStorage.setItem("token", response.data.token);
+    //     //so whenever we send a request to signin we want to store the token provided by backend somewhere in the "localStorage"
+    //     //Why are we doing this. So that in every sbsequent request I can send this token along
+
+    //     alert("You are sign in!");
+    //     getUserInformation();
+    // }
+
+    //Update SignIn with the help of Chatgpt
     async function signin() {
-        const username=document.getElementById("signin-username").value;
-        const password=document.getElementById("signin-password").value;
+    const username = document.getElementById("signin-username").value;
+    const password = document.getElementById("signin-password").value;
 
-        const response = await axios.post("http://localhost:3000/signin", {
-            username:username,
-            password:password
-        });
+    const response = await axios.post("http://localhost:3000/signin", {
+        username,
+        password
+    });
 
-        //Here the new thing is that the backend return us the "token" that we need to store it somewhere
-        //And the place we are going to store it is known as "localStorage"
-        //Every website has this "localStorage" and they store there few things such as theme, token, etc
-        //And stores in Key and value pair
+    // overwrite old token
+    localStorage.setItem("token", response.data.token);
 
-        localStorage.setItem("token", response.data.token);
-        //so whenever we send a request to signin we want to store the token provided by backend somewhere in the "localStorage"
-        //Why are we doing this. So that in every sbsequent request I can send this token along
+    // clear old UI first
+    document.getElementById("information").innerHTML = "";
 
-        alert("You are sign in!");
+    // fetch fresh data
+    await getUserInformation();
+
+    alert("Signed in successfully!");
+}
+
+    // async function getUserInformation() {
+    //     const response = await axios.get("http://localhost:3000/me", {
+    //         headers:{
+    //             token:localStorage.getItem("token")
+    //         }
+    //     })
+    //     document.getElementById("information").innerHTML=
+    //     "Username: "+response.data.username+ 
+    //     "Password: "+ response.data.password;
+    // }
+
+    //Update getUserInformation with the help of Chatgpt
+    // This function fetches logged-in user information from backend
+// It uses the JWT token stored in localStorage
+async function getUserInformation() {
+
+    // Step 1: Get the token from browser localStorage
+    // localStorage keeps data even after page refresh
+    const token = localStorage.getItem("token");
+
+    // Step 2: If no token exists, it means user is not logged in
+    // So we clear the UI and stop execution
+    if (!token) {
+        document.getElementById("information").innerHTML = "";
+        return; // Exit the function early
     }
+
+    // Step 3: Send GET request to backend "/me" route
+    // We send the token in headers so backend can verify the user
+    const response = await axios.get("http://localhost:3000/me", {
+        headers: {
+            token: token   // Backend will read this using req.headers.token
+        }
+    });
+
+    // Step 4: After backend verifies token,
+    // it sends back user data (username & password in your practice case)
+    // We display that data inside the div with id="information"
+    document.getElementById("information").innerHTML =
+        "Username: " + response.data.username +
+        " Password: " + response.data.password;
+}
+
+    if (localStorage.getItem("token")) {
+    getUserInformation();
+}
+
 </script>
 
 <body>
     <div>
         Signup
         <input id="signup-username" type="text" name="username" placeholder="username">
-        <input id="signup-password" type="password" name="username" placeholder="username">
+        <input id="signup-password" type="password" name="password" placeholder="password">
         <button onclick="signup()">Submit</button>
     </div>
     <hr>
     <div>
         Signin
         <input id="signin-username" type="text" name="username" placeholder="username">
-        <input id="signin-password" type="password" name="username" placeholder="username">
+        <input id="signin-password" type="password" name="password" placeholder="password">
         <button onclick="signin()">Submit</button>
     </div>
     <hr>

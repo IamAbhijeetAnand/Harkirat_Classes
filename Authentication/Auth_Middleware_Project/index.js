@@ -131,6 +131,32 @@ function auth(req, res, next) {
     }
 }
 
+app.get("/me", logger, auth, function (req, res) {
+
+    const currUser = req.username;
+
+    let foundUser = null;
+
+    for (let i = 0; i < users.length; i++) {
+        if (users[i].username === currUser) {
+            foundUser = users[i];
+            break;
+        }
+    }
+
+    if (!foundUser) {
+        return res.status(404).json({
+            message: "User not found"
+        });
+    }
+
+    res.status(200).json({
+        username: foundUser.username,
+        // DO NOT send password in real apps
+        password: foundUser.password
+    });
+});
+
 
 //Anyone one who want to hit the authenticated router, must have to provide the matched token
 app.get("/get-Password", logger, auth, function (req, res) {

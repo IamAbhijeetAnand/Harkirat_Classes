@@ -37,6 +37,15 @@ app.post("/signup", async function (req, res) {
         if (!email.includes("@")) {
             return res.status(400).json({ message: "Invalid email" });
         }
+
+        const existingUser = await UserModel.findOne({ email });
+
+        if (existingUser) {
+            return res.status(400).json({
+                message: "User already exists"
+            });
+        }
+        
         if (password.length < 6) {
             return res.status(400).json({ message: "Password too short" });
         }
@@ -48,12 +57,14 @@ app.post("/signup", async function (req, res) {
             name: name
         })
         res.status(200).json({
-            message: "User created and logged in"
-        })
+        message: "User created and logged in"
+    })
     }
     catch (err) {
         res.status(400).json({ message: "Email already exists" });
     }
+
+    
 
 });
 
@@ -69,7 +80,7 @@ app.post("/signin", async function (req, res) {
     })
     if (!user) {
         return res.status(403).json({
-            message: "Invalid Credentials"
+            message: "Invalid Credentials or user does not exist"
         });
     }
 
